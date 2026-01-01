@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Setup Test Users - RecruitmentAI</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { color: #333; }
+        .account { 
+            padding: 15px; 
+            margin: 10px 0; 
+            background: #f9f9f9; 
+            border-radius: 5px;
+            border-left: 4px solid #4CAF50;
+        }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover { background: #45a049; }
+        button:disabled { background: #ccc; cursor: not-allowed; }
+        .status { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        code { background: #f4f4f4; padding: 2px 6px; border-radius: 3px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Setup Test Users</h1>
+        <p>This page will create test users in Firebase Auth. Make sure you're connected to the internet and Firebase is configured.</p>
+        
+        <div class="status info">
+            <strong>Test Accounts to Create:</strong>
+            <ul>
+                <li><code>admin@recruitmentai.com</code> / <code>admin123</code> (Super Admin)</li>
+                <li><code>consultant@recruitmentai.com</code> / <code>consultant123</code> (Recruiter)</li>
+                <li><code>client@gmail.com</code> / <code>client123</code> (Client)</li>
+                <li><code>candidate@outlook.com</code> / <code>candidate123</code> (Candidate)</li>
+            </ul>
+        </div>
+
+        <button id="setupBtn" onclick="setupUsers()">Create All Test Users</button>
+        <button onclick="location.reload()">Refresh</button>
+
+        <div id="results"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
+        import { getAuth, createUserWithEmailAndPassword } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
+        import { getFirestore, doc, setDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
+
+        // Firebase config from environment or hardcoded
+        const firebaseConfig = {
+            apiKey: "AIzaSyBIfLSR-gRrLailk_2YCL6rdURGsRDV24k",
+            authDomain: "ai-app-a2c02.firebaseapp.com",
+            projectId: "ai-app-a2c02",
+            storageBucket: "ai-app-a2c02.firebasestorage.app",
+            messagingSenderId: "76373702280",
+            appId: "1:76373702280:web:439da1e713e3210d39d13d"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        const TEST_ACCOUNTS = [
+            {
+                email: 'admin@recruitmentai.com',
+                password: 'admin123',
+                role: 'super_admin',
+                userData: {
+                    firstName: 'Super',
+                    lastName: 'Admin',
+                    company: 'RecruitmentAI',
+                    phone: '+1-555-0001'
+                }
+            },
+            {
+                email: 'consultant@recruitmentai.com',
+                password: 'consultant123',
+                role: 'recruiter',
+                userData: {
+                    firstName: 'Consultant',
+                    lastName: 'Recruiter',
+                    company: 'RecruitmentAI',
+                    phone: '+1-555-0002'
+                }
+            },
+            {
+                email: 'client@gmail.com',
+                password: 'client123',
+                role: 'client',
+                userData: {
+                    firstName: 'Test',
+                    lastName: 'Client',
+                    company: 'Client Corp',
+                    phone: '+1-555-0003'
+                }
+            },
+            {
+                email: 'candidate@outlook.com',
+                password: 'candidate123',
+                role: 'candidate',
+                userData: {
+                    firstName: 'Test',
+                    lastName: 'Candidate',
+                    company: 'Freelancer',
+                    phone: '+1-555-0004'
+                }
+            }
+        ];
+
+        window.setupUsers = async function() {
+            const btn = document.getElementById('setupBtn');
+            const resultsDiv = document.getElementById('results');
+            btn.disabled = true;
+            btn.textContent = 'Creating users...';
+            resultsDiv.innerHTML = '';
+
+            let successCount = 0;
+            let errorCount = 0;
+
+            for (const account of TEST_ACCOUNTS) {
+                const accountDiv = document.createElement('div');
+                accountDiv.className = 'account';
+                accountDiv.innerHTML = `<strong>${account.email}</strong> - Creating...`;
+                resultsDiv.appendChild(accountDiv);
+
+                try {
+                    // Create user in Firebase Auth
+                    const userCredential = await createUserWithEmailAndPassword(auth, account.email, account.password);
+                    const user = userCredential.user;
+
+                    // Create profile in Firestore
+                    await setDoc(doc(db, 'users', user.uid), {
+                        uid: user.uid,
+                        email: account.email,
+                        role: account.role,
+                        ...account.userData,
+                        isActive: true,
+                        isTestAccount: true,
+                        createdAt: serverTimestamp(),
+                        lastLogin: serverTimestamp()
+                    });
+
+                    accountDiv.innerHTML = `<strong>${account.email}</strong> ✅ Created successfully (${account.role})`;
+                    accountDiv.style.borderLeftColor = '#4CAF50';
+                    successCount++;
+                } catch (error) {
+                    if (error.code === 'auth/email-already-in-use') {
+                        accountDiv.innerHTML = `<strong>${account.email}</strong> ⚠️ Already exists - updating password...`;
+                        // Try to update password (requires admin SDK, so just note it)
+                        accountDiv.innerHTML = `<strong>${account.email}</strong> ⚠️ Already exists (password may need manual update)`;
+                        successCount++;
+                    } else {
+                        accountDiv.innerHTML = `<strong>${account.email}</strong> ❌ Error: ${error.message}`;
+                        accountDiv.style.borderLeftColor = '#f44336';
+                        errorCount++;
+                    }
+                }
+
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+
+            const summary = document.createElement('div');
+            summary.className = `status ${errorCount === 0 ? 'success' : 'error'}`;
+            summary.innerHTML = `<strong>Summary:</strong> ${successCount} succeeded, ${errorCount} failed`;
+            resultsDiv.appendChild(summary);
+
+            btn.disabled = false;
+            btn.textContent = 'Create All Test Users';
+        };
+    </script>
+</body>
+</html>
+
