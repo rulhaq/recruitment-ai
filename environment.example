@@ -1,0 +1,129 @@
+# ================================
+# RecruitmentAI - Environment Variables
+# ================================
+# Copy this file to .env and fill in your actual values
+# Separate .env files may be needed in /client and /server directories
+
+# ================================
+# SERVER CONFIGURATION
+# ================================
+PORT=5000
+NODE_ENV=development
+CLIENT_URL=http://localhost:5173
+
+# ================================
+# CLIENT CONFIGURATION  
+# ================================
+VITE_API_URL=http://localhost:5000
+
+# ================================
+# FIREBASE CONFIGURATION
+# ================================
+# Server-side Firebase Admin SDK
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+FIREBASE_SERVICE_ACCOUNT={"type":"service_account","project_id":"your-project-id","private_key_id":"..."}
+
+# Client-side Firebase Web SDK
+VITE_FIREBASE_API_KEY=your-firebase-api-key
+VITE_FIREBASE_AUTH_DOMAIN=your-project.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+VITE_FIREBASE_APP_ID=your-app-id
+
+# ================================
+# GROQ AI CONFIGURATION
+# ================================
+GROQ_API_KEY=your-groq-api-key
+GROQ_MODEL=mixtral-8x7b-32768
+
+# ================================
+# ODOO CRM CONFIGURATION
+# ================================
+ODOO_URL=http://localhost:8069
+ODOO_DATABASE=odoo
+ODOO_USERNAME=admin
+ODOO_PASSWORD=admin
+
+# ================================
+# SECURITY
+# ================================
+JWT_SECRET=your-jwt-secret-key
+
+# ================================
+# OPTIONAL SERVICES
+# ================================
+# Google Analytics
+VITE_GOOGLE_ANALYTICS_ID=G-XXXXXXXXXX
+
+# Database backup settings
+BACKUP_INTERVAL=daily
+BACKUP_RETENTION_DAYS=30
+
+# ================================
+# SETUP INSTRUCTIONS
+# ================================
+# 1. Copy this file to .env in the root directory
+# 2. Copy relevant sections to client/.env and server/.env
+# 3. Replace all placeholder values with your actual credentials
+# 4. Obtain API keys from:
+#    - Groq: https://console.groq.com/
+#    - Firebase: https://console.firebase.google.com/
+# 5. Set up Odoo CRM instance or use cloud version
+# 6. Generate a secure JWT secret (minimum 256 bits) 
+
+# ========================================
+# RecruitmentAI Client Environment Variables
+# ========================================
+# 
+# Copy this file to client/.env and replace the values with your actual Firebase configuration
+# Get these values from: https://console.firebase.google.com/ → Project Settings → General → Web app
+#
+
+# Firebase Configuration (REQUIRED)
+VITE_FIREBASE_API_KEY=your-api-key-here
+VITE_FIREBASE_AUTH_DOMAIN=your-project-id.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your-project-id
+VITE_FIREBASE_STORAGE_BUCKET=your-project-id.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=your-sender-id
+VITE_FIREBASE_APP_ID=your-app-id
+
+# Optional Firebase Configuration
+VITE_FIREBASE_MEASUREMENT_ID=your-measurement-id
+
+# API Configuration
+VITE_API_URL=http://localhost:5000
+
+# Development Configuration
+VITE_DEV_MODE=true
+
+# ========================================
+# IMPORTANT SETUP INSTRUCTIONS
+# ========================================
+#
+# 1. Create Firebase Project:
+#    - Go to https://console.firebase.google.com
+#    - Create new project or select existing
+#
+# 2. Enable Authentication (CRITICAL):
+#    - Go to Authentication → Sign-in method
+#    - Enable "Email/Password" 
+#    - Enable "Google" (configure OAuth consent screen)
+#    - Without this, you'll get "auth/operation-not-allowed" error!
+#
+# 3. Create Firestore Database:
+#    - Go to Firestore Database
+#    - Create database in test mode
+#
+# 4. Get Configuration:
+#    - Go to Project Settings → General
+#    - Find "Your apps" section
+#    - Click Web app (</> icon)
+#    - Copy configuration values above
+#
+# 5. Copy this file:
+#    cp environment.example client/.env
+#    # Then edit client/.env with your values
+#
+# ======================================== 
